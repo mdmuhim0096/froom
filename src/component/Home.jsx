@@ -9,7 +9,7 @@ import { ArrowUp, ArrowDown, ClipboardList, LayoutDashboard, LogOut, CalendarPlu
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { active } from "../utils/utils"
-import { Live_API } from './api';
+
 const LazyComponent = lazy(() => import("./PublicPost"));
 
 let postLength = 0;
@@ -23,7 +23,7 @@ const Home = () => {
         socket.emit("__load_data__");
         const getdata = async () => {
             try {
-                const res = await axios.get(`${Live_API}/api/people/userData`, { withCredentials: true });
+                const res = await axios.get("https://nodebackend-ro7w.onrender.com/api/people/userData", { withCredentials: true });
                 const data = res.data.data;
                 socket.emit("register", data._id);
                 localStorage.setItem("myId", data._id);
@@ -64,7 +64,7 @@ const Home = () => {
     }, []);
 
     const handleBeforeUnload = () => {
-        const url = `${Live_API}/api/people/dactiveuser`;
+        const url = "https://nodebackend-ro7w.onrender.com/api/people/dactiveuser";
         const data = JSON.stringify({ userId });
         const blob = new Blob([data], { type: 'application/json' });
         navigator.sendBeacon(url, blob);

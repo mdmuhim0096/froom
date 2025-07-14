@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useLocation } from "react-router-dom";
 import axios from 'axios';
 import Seemore from './Seemore';
-import { server_port, send_request_api, Live_API } from './api';
+import { server_port, send_request_api } from './api';
 import { Link } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
 import { Ellipsis, X, Share2, MessageSquareIcon, ThumbsUp, Rocket, Copy, CopyCheck } from "lucide-react";
@@ -17,11 +17,11 @@ const Publicprofile = () => {
 
     useEffect(() => {
         const get_all_information = async () => {
-            const res_ = await axios.get(`${Live_API}/api/post/randompost/${userId}`);
-            const _res = await axios.get(`${Live_API}/api/people/randomuser/${userId}`);
+            const res_ = await axios.get(`https://nodebackend-ro7w.onrender.com/api/post/randompost/${userId}`);
+            const _res = await axios.get(`https://nodebackend-ro7w.onrender.com/api/people/randomuser/${userId}`);
             setUser(_res.data.user);
             setPost(res_.data.posts);
-            const ___res = await axios.get(`${Live_API}/api/friend/checkIsFriend/${localStorage.getItem("myId")}/${userId}`);
+            const ___res = await axios.get(`https://nodebackend-ro7w.onrender.com/api/friend/checkIsFriend/${localStorage.getItem("myId")}/${userId}`);
             setStatus(___res.data.status);
         }
         get_all_information();
@@ -37,7 +37,7 @@ const Publicprofile = () => {
     }
 
     const addLike = () => {
-        axios.post(`${Live_API}/api/people/profileLike`, { userId })
+        axios.post("https://nodebackend-ro7w.onrender.com/api/people/profileLike", { userId })
         setLoad(load + 1)
     }
 
@@ -55,7 +55,7 @@ const Publicprofile = () => {
     useEffect(() => {
         try {
             const getPublicPost = async () => {
-                const res = await axios.get(`${Live_API}/api/post/publicpost`, { withCredentials: true });
+                const res = await axios.get("https://nodebackend-ro7w.onrender.com/api/post/publicpost", { withCredentials: true });
                 setPost(res.data.posts);
             }
             getPublicPost();
@@ -79,7 +79,7 @@ const Publicprofile = () => {
     useEffect(() => {
         try {
             const getPostInfo = async (id) => {
-                const res = await axios.get(`${Live_API}/api/post/postinfo/${id}`);
+                const res = await axios.get(`https://nodebackend-ro7w.onrender.com/api/post/postinfo/${id}`);
                 setPost_info(res.data.singlePost);
                 setCommentReplay(res.data.singlePost.comments)
             }
@@ -95,56 +95,56 @@ const Publicprofile = () => {
     }, [post_info])
 
     const doLike = (postId) => {
-        axios.post(`${Live_API}/api/post/addlike`, { postId }, { withCredentials: true })
+        axios.post("https://nodebackend-ro7w.onrender.com/api/post/addlike", { postId }, { withCredentials: true })
     }
 
     const addComment = () => {
         if (commentOrReplay.trim()) {
-            axios.post(`${Live_API}/api/post/addcomment`, { comment: commentOrReplay, post_id }, { withCredentials: true })
-            setCommentOrReplay(``)
-            notify(`comment added ☺`)
+            axios.post("https://nodebackend-ro7w.onrender.com/api/post/addcomment", { comment: commentOrReplay, post_id }, { withCredentials: true })
+            setCommentOrReplay("")
+            notify("comment added ☺")
         }
     }
 
     const doReplay = () => {
         if (commentOrReplay.trim()) {
-            axios.post(`${Live_API}/api/post/addreplay`, { replyText: commentOrReplay, postId: post_id, commentId }, { withCredentials: true })
+            axios.post("https://nodebackend-ro7w.onrender.com/api/post/addreplay", { replyText: commentOrReplay, postId: post_id, commentId }, { withCredentials: true })
         }
-        setCommentOrReplay(``)
-        notify(`replay added ☺`)
+        setCommentOrReplay("")
+        notify("replay added ☺")
     }
 
     const doInnerRplay = () => {
         if (commentOrReplay.trim()) {
-            axios.post(`${Live_API}/api/post/addinnerreplay`, { replyText: commentOrReplay, postId: post_id, commentId, repId: innerReplayId }, { withCredentials: true })
+            axios.post("https://nodebackend-ro7w.onrender.com/api/post/addinnerreplay", { replyText: commentOrReplay, postId: post_id, commentId, repId: innerReplayId }, { withCredentials: true })
         }
-        setCommentOrReplay(``)
-        notify(`replay added ☺`)
+        setCommentOrReplay("")
+        notify("replay added ☺")
         setInnerReplay(false);
     }
-    const [replayOf, setReplayOf] = useState(``);
-    const [nestedId, setNestedId] = useState(``);
+    const [replayOf, setReplayOf] = useState("");
+    const [nestedId, setNestedId] = useState("");
     const [nsetReplay, setNestReplay] = useState(false);
 
     const doNestedInnerReplay = () => {
         if (commentOrReplay.trim()) {
-            axios.post(`${Live_API}/api/post/addNestedInnerReplay`, { replyText: commentOrReplay, postId: post_id, commentId, repId: innerReplayId, replayOf, nestedId }, { withCredentials: true })
+            axios.post("https://nodebackend-ro7w.onrender.com/api/post/addNestedInnerReplay", { replyText: commentOrReplay, postId: post_id, commentId, repId: innerReplayId, replayOf, nestedId }, { withCredentials: true })
         }
-        setCommentOrReplay(``)
-        notify(`replay added ☺`)
+        setCommentOrReplay("")
+        notify("replay added ☺")
         setInnerReplay(false);
     }
 
     const addLike_comment = () => {
-        axios.post(`${Live_API}/api/post/addlike_comment`, { postId: post_id, commentId }, { withCredentials: true });
+        axios.post("https://nodebackend-ro7w.onrender.com/api/post/addlike_comment", { postId: post_id, commentId }, { withCredentials: true });
     }
 
     const addlike_replay = (repId, commentId) => {
-        axios.post(`${Live_API}/api/post/addlike_replay`, { postId: post_id, commentId, repId }, { withCredentials: true });
+        axios.post("https://nodebackend-ro7w.onrender.com/api/post/addlike_replay", { postId: post_id, commentId, repId }, { withCredentials: true });
     }
 
     const inner_addlike_replay = (repId, commentId, nestId) => {
-        axios.post(`${Live_API}/api/post/inner_addlike_replay`, { postId: post_id, commentId, repId, nestId }, { withCredentials: true });
+        axios.post("https://nodebackend-ro7w.onrender.com/api/post/inner_addlike_replay", { postId: post_id, commentId, repId, nestId }, { withCredentials: true });
     }
 
     const move = () => { location.reload() }
@@ -173,7 +173,7 @@ const Publicprofile = () => {
                     </div>
                     <div>
                         <div className=''>
-                            <button className={requsetStatus === "accepted" ? "hidden" : ""} onClick={() => {
+                            <button className={requsetStatus === "accepted" ? "hidden": ""} onClick={() => {
                                 sendFriendRquest(userId);
                             }}>{requsetStatus}</button>
                         </div>
@@ -202,9 +202,9 @@ const Publicprofile = () => {
                     <div className='p-[3px] border w-full h-[87.5px] rounded-lg bg-gradient-to-r from-green-400 to-blue-500 flex justify-center items-center'>
                         <div className='bg-slate-800 h-full w-full rounded-md p-1'>
                             <h1>Friends</h1>
-                            <Link to={"/mutualfriends"} state={{ friends: user.friends }} className='my-3 flex justify-start items-center'>{user.friends?.map((data, index) => (
-                                <img key={index} className={`w-5 h-5 rounded-full ${index > 0 ? "-ml-2" : ""}`} src={server_port + data.image} />
-                            ))}</Link>
+                            <Link to={"/mutualfriends"} state={{friends: user.friends}} className='my-3 flex justify-start items-center'>{user.friends?.map((data, index) => (
+                            <img key={index} className={`w-5 h-5 rounded-full ${index > 0 ? "-ml-2" : ""}`} src={server_port + data.image} />
+                        ))}</Link>
                         </div>
                     </div>
                     <div className='p-[3px] border w-full rounded-lg bg-gradient-to-r from-green-400 to-blue-500 flex justify-center items-center max-h-auto'>

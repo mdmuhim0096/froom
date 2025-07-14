@@ -26,8 +26,6 @@ import Share from "./component/Share";
 import Removemember from "./component/Removemember";
 import GroupcallAudio from "./component/GroupcallAudio";
 import GroupcallVideo from "./component/GroupcallVideo";
-import { Live_API } from "./component/api";
-console.log(Live_API)
 const App = () => {
   const [styleSheet, setStyleSheet] = useState("");
 
@@ -35,7 +33,7 @@ const App = () => {
     socket.emit("__load_data__");
     try {
       const mydata = async () => {
-        const res = await axios.get(`${Live_API}/api/people/userStyle`, { withCredentials: true })
+        const res = await axios.get("https://nodebackend-ro7w.onrender.com/api/people/userStyle", { withCredentials: true })
         const data = res.data?.data?.styles;
         setStyleSheet(data)
       }

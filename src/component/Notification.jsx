@@ -6,14 +6,13 @@ import { Link } from "react-router-dom";
 import { X } from "lucide-react"
 import ShortText from './ShortText';
 import { ToastContainer, toast } from 'react-toastify';
-
 const Notification = () => {
     const myId = localStorage.getItem("myId");
     const [notifications, setNoti] = useState([]);
     const [load, setLoad] = useState(0);
     useEffect(() => {
         const get_noti = async () => {
-            const res = await axios.get(`${Live_API}/api/noti/get_noti/${myId}`);
+            const res = await axios.get(`https://nodebackend-ro7w.onrender.com/api/noti/get_noti/${myId}`);
             const data = res.data;
             setNoti(data);
         }
@@ -21,11 +20,12 @@ const Notification = () => {
     }, [load]);
 
     const deleteNotification = (id) => {
-        axios.post(`${Live_API}/api/noti/delete`, { id }).then(res => {
+        axios.post("https://nodebackend-ro7w.onrender.com/api/noti/delete", { id }).then(res => {
             toast.success(res.data.message);
         })
         setLoad(load + 1);
     }
+
     return (
         <div>
             <ToastContainer />

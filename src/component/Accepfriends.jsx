@@ -2,15 +2,14 @@ import React, { useEffect, useState } from 'react';
 import axios from "axios";
 import { respond_request_api, server_port, rejected_api } from './api';
 import Navbar from "./Navbar";
-import { Live_API } from './api';
-console.log(Live_API)
+
 const Accepfriends = () => {
     const [load, setLoad] = useState(false)
     const [accepts, setAccept] = useState([]);
     useEffect(() => {
         const get_accept = async () => {
             try {
-                const res = await axios.get(`${Live_API}/api/friend/friend_requests`, { withCredentials: true });
+                const res = await axios.get("https://nodebackend-ro7w.onrender.com/api/friend/friend_requests", { withCredentials: true });
                 setAccept(res.data.data);
             } catch (error) {
                 console.log(error);
@@ -43,7 +42,7 @@ const Accepfriends = () => {
                                 setLoad(load ? false : true)
                             }}>reject</button>
                             <button onClick={() => {
-                                accept(data._id, `accepted`)
+                                accept(data._id, "accepted")
                                 setLoad(load ? false : true)
                             }}>accept</button>
                         </div>

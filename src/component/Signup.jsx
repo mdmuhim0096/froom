@@ -3,7 +3,6 @@ import gsap from "gsap"
 import axios from "axios"
 import { Link, useNavigate } from "react-router-dom";
 import { Leaf } from "lucide-react";
-import { Live_API } from "./api"
 const Signup = () => {
     const [name, setName] = useState('');
     const [age, setAge] = useState('');
@@ -24,7 +23,7 @@ const Signup = () => {
         fd.append("pass", password)
         fd.append("img", image)
         fd.append("gender", gender)
-        axios.post(`${Live_API}/api/people/signup`, fd, { withCredentials: true });
+        axios.post("https://nodebackend-ro7w.onrender.com/api/people/signup", fd, { withCredentials: true });
         setTimeout(() => { navigate("/") }, 500);
     }
     return (

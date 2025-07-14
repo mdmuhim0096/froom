@@ -3,35 +3,33 @@ import { Home, Monitor, MailOpen, Bell, Users, UserPlus } from "lucide-react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import socket from "./socket";
-import { Live_API } from "./api"
 
 const Navbar = () => {
     const [numberofreq, setNumberOfReq] = useState(0);
     const [numberofnoti, setNumberOfNoti] = useState([]);
     const myId = localStorage.getItem("myId");
 
-
     const getnumber = async () => {
-        const res = axios.get(`${Live_API}/api/friend/counter_req`, { withCredentials: true });
+        const res = axios.get("https://nodebackend-ro7w.onrender.com/api/friend/counter_req", { withCredentials: true });
         setNumberOfReq((await res).data.totalreq.length);
 
-        const res_ = await axios.get(`${Live_API}/api/noti/noti_number/${myId}`);
-        const _res_ = await axios.get(`${Live_API}/api/noti/noti_number_/${myId}`);
+        const res_ = await axios.get(`https://nodebackend-ro7w.onrender.com/api/noti/noti_number/${myId}`);
+        const _res_ = await axios.get(`https://nodebackend-ro7w.onrender.com/api/noti/noti_number_/${myId}`);
         setNumberOfNoti([...res_.data.mynumber, ..._res_.data.mynumber]);
     }
 
     useEffect(() => {
         getnumber();
-        document.title = numberofnoti > 0 ? `chat room (${numberofnoti})` : `Chat Room`;
+        document.title = numberofnoti > 0 ? `chat room (${numberofnoti})` : "Chat Room";
         const loadData = (e) => { getnumber() };
-        socket.on(`__load_data__`, loadData);
+        socket.on("__load_data__", loadData);
         return () => {
-            socket.off(`__load_data__`, loadData);
+            socket.off("__load_data__", loadData);
         };
     }, []);
 
     const reset = (_type) => {
-        axios.post(`${Live_API}/api/friend/reset_counter_req`, { _type }, { withCredentials: true });
+        axios.post("https://nodebackend-ro7w.onrender.com/api/friend/reset_counter_req", { _type }, { withCredentials: true });
     }
 
     return (

@@ -6,10 +6,9 @@ const Removemember = () => {
 
     const [members, setMembers] = useState([]);
     const [load, setLoad] = useState(0);
-
     useEffect(() => {
         const getMembers = async () => {
-            await axios.get(`${Live_API}/api/group/members/` + localStorage.getItem(`groupId`)).then(res => {
+            await axios.get("https://nodebackend-ro7w.onrender.com/api/group/members/"+localStorage.getItem("groupId")).then(res => {
                 setMembers(res.data.members);
             })
         }
@@ -19,20 +18,19 @@ const Removemember = () => {
 
     console.log(members)
 
-    async function remove(userId) {
-        axios.post(`${Live_API}/api/group/removemember/` + localStorage.getItem(`groupId`), { userId })
+    async function remove(userId){
+        axios.post("https://nodebackend-ro7w.onrender.com/api/group/removemember/" + localStorage.getItem("groupId"), {userId})
         setLoad(load + 1)
     }
-
     return (
         <div>{
             members.map((data, index) => (
                 <div key={index}>
-                    <div>
-                        <img src={server_port + data.userId.image} />
-                        <h4>{data.userId.name}</h4>
+                   <div>
+                    <img src={server_port + data.userId.image} />
+                    <h4>{data.userId.name}</h4>
                     </div>
-                    <button onClick={() => { remove(data.userId._id) }}>remove</button>
+                    <button onClick={() =>{remove(data.userId._id)}}>remove</button>
                 </div>
             ))
         }</div>

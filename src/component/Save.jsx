@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { server_port, Live_API } from './api';
+import { server_port } from './api';
 import { Ellipsis, X, Share2, MessageSquareIcon, ThumbsUp, Rocket } from "lucide-react";
 import Seemore from './Seemore';
 import { Link } from "react-router-dom";
@@ -34,8 +34,8 @@ const Save = () => {
 
     useEffect(() => {
         const getSave = async () => {
-            const myId = localStorage.getItem(`myId`);
-            const res = await axios.get(`${Live_API}/api/save/save/` + myId);
+            const myId = localStorage.getItem("myId");
+            const res = await axios.get("https://nodebackend-ro7w.onrender.com/api/save/save/" + myId);
             setSave(res.data.save);
         }
         getSave();
@@ -43,16 +43,16 @@ const Save = () => {
 
 
     const addNoti = (commentId_, commentText) => {
-        axios.post(`${Live_API}/api/addNoti/add`, { receiverId: post_info.postOwner, senderId: localStorage.getItem(`myId`), type: `comment`, commentId: commentId_, text: commentText, postId: null })
-        socket.emit(`load_data`);
+        axios.post("https://nodebackend-ro7w.onrender.com/api/addNoti/add", { receiverId: post_info.postOwner, senderId: localStorage.getItem("myId"), type: "comment", commentId: commentId_, text: commentText, postId: null })
+        socket.emit("load_data");
     }
 
     const notify = (m) => { toast.success(m) };
 
     const getPostInfo = async (id) => {
-        console.log(`working....!`)
+        console.log("working....!")
         try {
-            const res = await axios.get(`${Live_API}/api/post/postinfo/${id}`);
+            const res = await axios.get(`https://nodebackend-ro7w.onrender.com/api/post/postinfo/${id}`);
             setPost_info(res.data.singlePost);
             setCommentReplay(res.data.singlePost.comments)
         } catch (err) {
@@ -63,65 +63,65 @@ const Save = () => {
     useEffect(() => {
         getPostInfo(post_id);
 
-        socket.on(`__load_data__`, (e) => { getPostInfo(post_id) })
+        socket.on("__load_data__", (e) => { getPostInfo(post_id) })
         return () => {
-            socket.off(`__load_data__`)
+            socket.off("__load_data__")
         }
     }, [post_id])
 
     const doLike = (postId) => {
-        axios.post(`${Live_API}/api/post/addlike`, { postId }, { withCredentials: true })
+        axios.post("https://nodebackend-ro7w.onrender.com/api/post/addlike", { postId }, { withCredentials: true })
     }
 
     const addComment = () => {
         if (commentOrReplay.trim()) {
-            axios.post(`${Live_API}/api/post/addcomment`, { comment: commentOrReplay, post_id }, { withCredentials: true })
-            setCommentOrReplay(``)
-            notify(`comment added ☺`);
+            axios.post("https://nodebackend-ro7w.onrender.com/api/post/addcomment", { comment: commentOrReplay, post_id }, { withCredentials: true })
+            setCommentOrReplay("")
+            notify("comment added ☺");
             addNoti(post_id, commentOrReplay);
         }
     }
 
     const doReplay = () => {
         if (commentOrReplay.trim()) {
-            axios.post(`${Live_API}/api/post/addreplay`, { replyText: commentOrReplay, postId: post_id, commentId }, { withCredentials: true });
+            axios.post("https://nodebackend-ro7w.onrender.com/api/post/addreplay", { replyText: commentOrReplay, postId: post_id, commentId }, { withCredentials: true });
             addNoti(post_id, commentOrReplay);
         }
-        setCommentOrReplay(``)
-        notify(`replay added ☺`);
+        setCommentOrReplay("")
+        notify("replay added ☺");
     }
 
     const doInnerRplay = () => {
         if (commentOrReplay.trim()) {
-            axios.post(`${Live_API}/api/post/addinnerreplay`, { replyText: commentOrReplay, postId: post_id, commentId, repId: innerReplayId }, { withCredentials: true })
+            axios.post("https://nodebackend-ro7w.onrender.com/api/post/addinnerreplay", { replyText: commentOrReplay, postId: post_id, commentId, repId: innerReplayId }, { withCredentials: true })
         }
-        setCommentOrReplay(``)
-        notify(`replay added ☺`)
+        setCommentOrReplay("")
+        notify("replay added ☺")
         setInnerReplay(false);
         addNoti(innerReplayId, commentOrReplay);
     }
 
     const doNestedInnerReplay = () => {
         if (commentOrReplay.trim()) {
-            axios.post(`${Live_API}/api/post/addNestedInnerReplay`, { replyText: commentOrReplay, postId: post_id, commentId, repId: innerReplayId, replayOf, nestedId }, { withCredentials: true })
+            axios.post("https://nodebackend-ro7w.onrender.com/api/post/addNestedInnerReplay", { replyText: commentOrReplay, postId: post_id, commentId, repId: innerReplayId, replayOf, nestedId }, { withCredentials: true })
         }
-        setCommentOrReplay(``)
-        notify(`replay added ☺`)
+        setCommentOrReplay("")
+        notify("replay added ☺")
         setInnerReplay(false);
         addNoti(nestedId, commentOrReplay);
     }
 
     const addLike_comment = () => {
-        axios.post(`${Live_API}/api/post/addlike_comment`, { postId: post_id, commentId }, { withCredentials: true });
+        axios.post("https://nodebackend-ro7w.onrender.com/api/post/addlike_comment", { postId: post_id, commentId }, { withCredentials: true });
     }
 
     const addlike_replay = (repId, commentId) => {
-        axios.post(`${Live_API}/api/post/addlike_replay`, { postId: post_id, commentId, repId }, { withCredentials: true });
-        console.log(`commentId`, commentId, `repId`, repId, `postId`, post_id)
+        axios.post("https://nodebackend-ro7w.onrender.com/api/post/addlike_replay", { postId: post_id, commentId, repId }, { withCredentials: true });
+        console.log("commentId", commentId, "repId", repId, "postId", post_id)
     }
 
     const inner_addlike_replay = (repId, commentId, nestId) => {
-        axios.post(`${Live_API}/api/post/inner_addlike_replay`, { postId: post_id, commentId, repId, nestId }, { withCredentials: true });
+        axios.post("https://nodebackend-ro7w.onrender.com/api/post/inner_addlike_replay", { postId: post_id, commentId, repId, nestId }, { withCredentials: true });
     }
 
     const inputRef = useRef();
@@ -131,10 +131,11 @@ const Save = () => {
 
 
     const remove_post = (postId) => {
-        axios.post(`${Live_API}/api/people/remove_post`, { postId }, { withCredentials: true });
+        axios.post("https://nodebackend-ro7w.onrender.com/api/people/remove_post", { postId }, { withCredentials: true });
         setLoad(load + 1);
     };
 
+    console.log(saves);
     return (
         <div className='w-full h-screen overflow-y-auto' >
             <div className='sticky top-0 z-40'>

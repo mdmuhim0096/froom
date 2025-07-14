@@ -17,7 +17,6 @@ import { chatbgImage } from "../utils/chatbg";
 import VoiceButton from './Vioce';
 import Animation from './Animation';
 import Emoji from './Emoji';
-import { Live_API } from './api';
 
 const ChatRoom = () => {
 
@@ -42,22 +41,22 @@ const ChatRoom = () => {
     const focus = () => { inputRef.current.focus() };
 
     const myData_ = async () => {
-        const res = await axios.get(`${Live_API}/api/people/userData`, { withCredentials: true });
-        localStorage.setItem(`myId`, res.data.data._id);
-        localStorage.setItem(`myImage`, res.data.data.image);
-        localStorage.setItem(`myName`, res.data.data.name);
+        const res = await axios.get("https://nodebackend-ro7w.onrender.com/api/people/userData", { withCredentials: true });
+        localStorage.setItem("myId", res.data.data._id);
+        localStorage.setItem("myImage", res.data.data.image);
+        localStorage.setItem("myName", res.data.data.name);
     }
 
     useEffect(() => {
-        socket.emit(`__load_data__`);
-        const containerHeigh = document.getElementById(`chat_container`);
+        socket.emit("__load_data__");
+        const containerHeigh = document.getElementById("chat_container");
         containerHeigh.onscroll = () => {
             containerHeigh.scrollTop === 0 ? setScrollDown(true) : setScrollDown(false);
         }
         myData_();
-        get_chats(localStorage.getItem(`userId`), localStorage.getItem(`myId`));
+        get_chats(localStorage.getItem("userId"), localStorage.getItem("myId"));
         active();
-        window.onscroll = () => { socket.emit(`__load_data__`); }
+        window.onscroll = () => { socket.emit("__load_data__"); }
     }, []);
 
     window.onload = () => { myData_(); }
@@ -73,7 +72,7 @@ const ChatRoom = () => {
 
     const get_my_groups = async () => {
         try {
-            const res = await axios.get(`${Live_API}/api/group/myGroup/` + localStorage.getItem(`myId`));
+            const res = await axios.get("https://nodebackend-ro7w.onrender.com/api/group/myGroup/" + localStorage.getItem("myId"));
             setGroups(res.data.groups.groups)
         } catch (error) {
             console.log(error);
@@ -83,51 +82,51 @@ const ChatRoom = () => {
     useEffect(() => {
         get_my_groups();
         get_my_friends();
-        setInputText(isReplay ? `write you'r replay text` : `write message...!`);
+        setInputText(isReplay ? "write you'r replay text" : "write message...!");
     }, [load, isReplay])
 
     useEffect(() => {
         const handleIncomingCall = (data) => {
-            if (data.friendId === localStorage.getItem(`myId`)) {
-                localStorage.setItem(`collerName`, data.myName)
-                localStorage.setItem(`collerImage`, data.myImage)
-                document.getElementById(`calltone`)?.play();
-                localStorage.setItem(`uniqueId`, data.uniqueId)
-                navigate(`/videocall`);
+            if (data.friendId === localStorage.getItem("myId")) {
+                localStorage.setItem("collerName", data.myName)
+                localStorage.setItem("collerImage", data.myImage)
+                document.getElementById("calltone")?.play();
+                localStorage.setItem("uniqueId", data.uniqueId)
+                navigate("/videocall");
             }
         };
-        socket.on(`incoming_call`, handleIncomingCall);
+        socket.on("incoming_call", handleIncomingCall);
         return () => {
-            socket.off(`incoming_call`, handleIncomingCall);
+            socket.off("incoming_call", handleIncomingCall);
         };
     }, [socket, navigate]);
 
     useEffect(() => {
         const handleIncomingCall = (data) => {
-            if (data.friendId === localStorage.getItem(`myId`)) {
-                localStorage.setItem(`collerName`, data.myName)
-                localStorage.setItem(`collerImage`, data.myImage)
-                document.getElementById(`calltone`)?.play();
-                localStorage.setItem(`uniqueId_audio`, data.uniqueId_audio)
-                navigate(`/audiocall`);
+            if (data.friendId === localStorage.getItem("myId")) {
+                localStorage.setItem("collerName", data.myName)
+                localStorage.setItem("collerImage", data.myImage)
+                document.getElementById("calltone")?.play();
+                localStorage.setItem("uniqueId_audio", data.uniqueId_audio)
+                navigate("/audiocall");
             }
         };
 
-        socket.on(`____incoming_call____`, handleIncomingCall);
+        socket.on("____incoming_call____", handleIncomingCall);
         return () => {
-            socket.off(`____incoming_call____`, handleIncomingCall);
+            socket.off("____incoming_call____", handleIncomingCall);
         };
     }, []);
 
     const get_chats = async (riciver, sender) => {
-        await axios.post(`${Live_API}/api/people/getChat`, { riciver, sender })
+        await axios.post("https://nodebackend-ro7w.onrender.com/api/people/getChat", { riciver, sender })
             .then(res => {
                 setChat(res.data.data);
             })
     }
 
     useEffect(() => {
-        get_chats(localStorage.getItem(`userId`), localStorage.getItem(`myId`));
+        get_chats(localStorage.getItem("userId"), localStorage.getItem("myId"));
     }, [load, safarateUserState]);
 
     useEffect(() => {
@@ -135,20 +134,20 @@ const ChatRoom = () => {
         const handleReceiveMessage = (data) => {
             setLoad(load + 2)
             get_my_friends();
-            const notifications = document.getElementById(`notifications`);
+            const notifications = document.getElementById("notifications");
             if (notifications) {
                 notifications.play();
             }
             setTimeout(() => {
                 try {
-                    const chat_container = document.getElementById(`chat_container`);
-                    chat_container.scrollTo({ top: chat_container.scrollHeight, behavior: `smooth` })
+                    const chat_container = document.getElementById("chat_container");
+                    chat_container.scrollTo({ top: chat_container.scrollHeight, behavior: "smooth" })
                 } catch (err) {
                     console.log(err);
                 }
             }, 400);
         };
-        get_chats(localStorage.getItem(`userId`), localStorage.getItem(`myId`));
+        get_chats(localStorage.getItem("userId"), localStorage.getItem("myId"));
         socket.on('receive_message', handleReceiveMessage);
         return () => {
             socket.off('receive_message', handleReceiveMessage);
@@ -158,17 +157,17 @@ const ChatRoom = () => {
 
     useEffect(() => {
         const __load_data__ = (e) => {
-            get_chats(localStorage.getItem(`userId`), localStorage.getItem(`myId`));
+            get_chats(localStorage.getItem("userId"), localStorage.getItem("myId"));
             get_my_friends();
-            getOurDesign(localStorage.getItem(`myId`), localStorage.getItem(`userId`))
-            const replay = document.getElementById(`replay`);
+            getOurDesign(localStorage.getItem("myId"), localStorage.getItem("userId"))
+            const replay = document.getElementById("replay");
             if (replay) {
                 replay.play();
             }
             setLoad(e);
             setLoad(e);
             if (isCahtTab === false) {
-                get_group_chats(localStorage.getItem(`groupId`));
+                get_group_chats(localStorage.getItem("groupId"));
             }
             setTimeout(() => {
                 topToBottom()
@@ -176,17 +175,17 @@ const ChatRoom = () => {
             }, 400)
         };
 
-        socket.on(`__load_data__`, __load_data__);
+        socket.on("__load_data__", __load_data__);
         return () => {
-            socket.off(`__load_data__`, __load_data__);
+            socket.off("__load_data__", __load_data__);
             socket.offAny();
         };
 
     }, [load]);
 
     const goToBottom = () => {
-        const chat_container = document.getElementById(`chat_container`);
-        chat_container.scrollTo({ top: chat_container.scrollHeight, behavior: `smooth` })
+        const chat_container = document.getElementById("chat_container");
+        chat_container.scrollTo({ top: chat_container.scrollHeight, behavior: "smooth" })
     }
 
     const getTime = () => {
@@ -213,7 +212,7 @@ const ChatRoom = () => {
     const getOurDesign = async (myId, _userId_) => {
 
         try {
-            const res = await axios.get(`${Live_API}/api/friend/ourstyle/${myId}/${_userId_}`);
+            const res = await axios.get(`https://nodebackend-ro7w.onrender.com/api/friend/ourstyle/${myId}/${_userId_}`);
             setOurDesign(res.data.design)
         } catch (err) {
             console.log(err);
@@ -221,16 +220,16 @@ const ChatRoom = () => {
     };
 
     useEffect(() => {
-        getOurDesign(localStorage.getItem(`myId`), localStorage.getItem(`userId`));
+        getOurDesign(localStorage.getItem("myId"), localStorage.getItem("userId"));
     }, [load])
 
     useEffect(() => {
-        getOurDesign(localStorage.getItem(`myId`), localStorage.getItem(`userId`));
+        getOurDesign(localStorage.getItem("myId"), localStorage.getItem("userId"));
     }, [])
 
     const getMediaType = (___media___, file) => {
         const type_ = ___media___.type;
-        const type = type_.startsWith(`image/`) ? `image` : type_.startsWith(`audio/`) ? `audio` : type_.startsWith(`video/`) ? `video` : null;
+        const type = type_.startsWith("image/") ? "image" : type_.startsWith("audio/") ? "audio" : type_.startsWith("video/") ? "video" : null;
         const fd = new FormData();
         fd.append(type, ___media___);
         return file === true ? fd : type;
@@ -239,18 +238,18 @@ const ChatRoom = () => {
     async function handelMedia() {
         try {
             const dateTime = getTime();
-            const realtime = dateTime.date + ` ` + dateTime.actual_time;
-            const riciver = localStorage.getItem(`userId`);
-            const sender = localStorage.getItem(`myId`);
+            const realtime = dateTime.date + " " + dateTime.actual_time;
+            const riciver = localStorage.getItem("userId");
+            const sender = localStorage.getItem("myId");
             const __mediafile__ = getMediaType(media, true);
-            const res = axios.post(`${Live_API}/api/chat/upload`, __mediafile__);
+            const res = axios.post("https://nodebackend-ro7w.onrender.com/api/chat/upload", __mediafile__);
             const mediaUrl = (await res).data.mediaUrl;
             setMedia(undefined)
             setFileUrl(null);
             setTimeout(() => {
                 const data = { riciver, sender, message, mediaUrl, realtime };
                 socket.emit('send_message', data);
-                get_chats(safarateUserState._id, localStorage.getItem(`myId`));
+                get_chats(safarateUserState._id, localStorage.getItem("myId"));
                 goToBottom();
             }, 100);
 
@@ -262,15 +261,15 @@ const ChatRoom = () => {
 
     const sendMessage = () => {
         const dateTime = getTime();
-        const realtime = dateTime.date + ` ` + dateTime.actual_time;
+        const realtime = dateTime.date + " " + dateTime.actual_time;
         if (message.trim()) {
-            const riciver = localStorage.getItem(`userId`);
-            const sender = localStorage.getItem(`myId`);
+            const riciver = localStorage.getItem("userId");
+            const sender = localStorage.getItem("myId");
             const data = { riciver, sender, message, realtime };
             setTimeout(() => {
                 socket.emit('send_message', data);
                 goToBottom();
-                get_chats(localStorage.getItem(`userId`), localStorage.getItem(`myId`));
+                get_chats(localStorage.getItem("userId"), localStorage.getItem("myId"));
             }, 300);
             setMessage('');
         }
@@ -281,35 +280,35 @@ const ChatRoom = () => {
     };
 
     const deleteMessage = (chatId) => {
-        axios.post(`${Live_API}/api/chat/delete`, { chatId });
-        socket.emit(`__load_data__`)
+        axios.post("https://nodebackend-ro7w.onrender.com/api/chat/delete", { chatId });
+        socket.emit("__load_data__")
     }
 
     const unsentMessage = (chatId) => {
-        axios.post(`${Live_API}/api/chat/unsent`, { chatId });
-        socket.emit(`__load_data__`);
+        axios.post("https://nodebackend-ro7w.onrender.com/api/chat/unsent", { chatId });
+        socket.emit("__load_data__");
     }
 
     const replayMessage = (chatId) => {
         const dateTime = getTime();
-        const time = dateTime.date + ` ` + dateTime.actual_time;
-        axios.post(`${Live_API}/api/chat/replaychat`,
-            { recevireId: localStorage.getItem(`userId`), senderId: localStorage.getItem(`myId`), time, user: localStorage.getItem(`myId`), chatId, replay: message })
-        socket.emit(`__load_data__`);
+        const time = dateTime.date + " " + dateTime.actual_time;
+        axios.post("https://nodebackend-ro7w.onrender.com/api/chat/replaychat",
+            { recevireId: localStorage.getItem("userId"), senderId: localStorage.getItem("myId"), time, user: localStorage.getItem("myId"), chatId, replay: message })
+        socket.emit("__load_data__");
         setIsRplay(false);
         setLoad(load + 1);
     }
 
-    const sender = localStorage.getItem(`myId`);
+    const sender = localStorage.getItem("myId");
     const [showSetting, setShowSetting] = useState(false);
 
-    const [isItalic, setIsItalic] = useState(localStorage.getItem(`______isItalic`));
+    const [isItalic, setIsItalic] = useState(localStorage.getItem("______isItalic"));
 
     const doMessageTextItalic = () => {
         const myId = sender;
-        const myfriendId = localStorage.getItem(`userId`);
-        axios.post(`${Live_API}/api/friend/doMessageItalic`, { isToggleForBase: isItalic === true || isItalic === `true` ? false : true, myId, myfriendId }).then(res => {
-            localStorage.setItem(`______isItalic`, res.data.isItalic);
+        const myfriendId = localStorage.getItem("userId");
+        axios.post(`https://nodebackend-ro7w.onrender.com/api/friend/doMessageItalic`, { isToggleForBase: isItalic === true || isItalic === "true" ? false : true, myId, myfriendId }).then(res => {
+            localStorage.setItem("______isItalic", res.data.isItalic);
             setIsItalic(res.data.isItalic);
         });
         setLoad(load + 1);
@@ -318,11 +317,11 @@ const ChatRoom = () => {
     const doChangeTextColor = (mycolor) => {
         try {
             const myId = sender;
-            const myFriendId = localStorage.getItem(`userId`);
-            const colorNameArray = mycolor.split(`-`);
-            colorNameArray[0] = `text`;
-            const color = colorNameArray.join(`-`);
-            axios.post(`${Live_API}/api/friend/doFontColorChange`, { color, myId, myFriendId });
+            const myFriendId = localStorage.getItem("userId");
+            const colorNameArray = mycolor.split("-");
+            colorNameArray[0] = "text";
+            const color = colorNameArray.join("-");
+            axios.post(`https://nodebackend-ro7w.onrender.com/api/friend/doFontColorChange`, { color, myId, myFriendId });
             setLoad(load + 1);
         } catch (err) {
             console.log(err)
@@ -331,105 +330,105 @@ const ChatRoom = () => {
 
     const doChangeBgColor = (bgColor, bgImage, bgType) => {
         const myId = sender;
-        const myFriendId = localStorage.getItem(`userId`);
-        axios.post(`${Live_API}/api/friend/doChatBgChange`, { bgColor, bgImage, bgType, myId, myFriendId });
+        const myFriendId = localStorage.getItem("userId");
+        axios.post(`https://nodebackend-ro7w.onrender.com/api/friend/doChatBgChange`, { bgColor, bgImage, bgType, myId, myFriendId });
         setLoad(load + 1);
     }
 
     const doChangeFontFamily = (family) => {
-        const myId = localStorage.getItem(`myId`);
-        const myFriendId = localStorage.getItem(`userId`);
-        axios.post(`${Live_API}/api/friend/doFontFamilyChange`, { family, myId, myFriendId });
+        const myId = localStorage.getItem("myId");
+        const myFriendId = localStorage.getItem("userId");
+        axios.post(`https://nodebackend-ro7w.onrender.com/api/friend/doFontFamilyChange`, { family, myId, myFriendId });
         setLoad(load + 6);
     }
 
     const fontFamilyArray = [
-        `font-sans`,
-        `font-serif`,
-        `font-mono`,
-        `font-inter`,
-        `font-roboto`,
-        `font-poppins`,
-        `font-open-sans`,
-        `font-lato`,
-        `font-ubuntu`,
-        `font-josefin`,
-        `font-raleway`];
+        "font-sans",
+        "font-serif",
+        "font-mono",
+        "font-inter",
+        "font-roboto",
+        "font-poppins",
+        "font-open-sans",
+        "font-lato",
+        "font-ubuntu",
+        "font-josefin",
+        "font-raleway"];
 
     const [isBar, setIsBar] = useState(false);
 
     const handelCreateCall = () => {
-        const friendId = localStorage.getItem(`userId`), myImage = localStorage.getItem(`myImage`), myName = localStorage.getItem(`myName`);
-        localStorage.setItem(`uniqueId`, friendId + localStorage.getItem(`myId`));
+        const friendId = localStorage.getItem("userId"), myImage = localStorage.getItem("myImage"), myName = localStorage.getItem("myName");
+        localStorage.setItem("uniqueId", friendId + localStorage.getItem("myId"));
         const timer = setTimeout(() => {
-            createCall(callId, true, socket, friendId, myImage, myName, localStorage.getItem(`uniqueId`));
+            createCall(callId, true, socket, friendId, myImage, myName, localStorage.getItem("uniqueId"));
         }, 2000);
         return () => clearTimeout(timer);
     }
 
     const safarateUser = async (id) => {
-        const res = await axios.get(`${Live_API}/api/people/friendData/` + id);
+        const res = await axios.get("https://nodebackend-ro7w.onrender.com/api/people/friendData/" + id);
         setSafarateUser(res.data.user);
-        localStorage.setItem(`userImage`, res.data.user.image)
-        localStorage.setItem(`userName`, res.data.user.name)
+        localStorage.setItem("userImage", res.data.user.image)
+        localStorage.setItem("userName", res.data.user.name)
     }
 
     const hiddenReplayPlate = (index) => {
         const thisMessage = document.getElementById(`message${index}`);
-        if (!thisMessage.classList.contains(`hidden`)) {
-            thisMessage.classList.remove(`flex`);
-            thisMessage.classList.add(`hidden`);
+        if (!thisMessage.classList.contains("hidden")) {
+            thisMessage.classList.remove("flex");
+            thisMessage.classList.add("hidden");
         }
     }
 
     const handleCreateCall = async () => {
-        const friendId = localStorage.getItem(`userId`), myImage = localStorage.getItem(`myImage`), myName = localStorage.getItem(`myName`);
-        localStorage.setItem(`uniqueId_audio`, friendId + localStorage.getItem(`myId`));
-        await ___createCall___(callId, socket, friendId, myImage, myName, localStorage.getItem(`uniqueId_audio`));
+        const friendId = localStorage.getItem("userId"), myImage = localStorage.getItem("myImage"), myName = localStorage.getItem("myName");
+        localStorage.setItem("uniqueId_audio", friendId + localStorage.getItem("myId"));
+        await ___createCall___(callId, socket, friendId, myImage, myName, localStorage.getItem("uniqueId_audio"));
     };
 
     const blockUser = (key) => {
-        const friendId = localStorage.getItem(`userId`), myId = localStorage.getItem(`myId`);
-        axios.post(`${Live_API}/api/friend/` + key, { friendId, myId })
-        socket.emit(`__load_data__`);
-        getOurDesign(localStorage.getItem(`myId`), localStorage.getItem(`userId`));
+        const friendId = localStorage.getItem("userId"), myId = localStorage.getItem("myId");
+        axios.post("https://nodebackend-ro7w.onrender.com/api/friend/" + key, { friendId, myId })
+        socket.emit("__load_data__");
+        getOurDesign(localStorage.getItem("myId"), localStorage.getItem("userId"));
     }
 
     const createGroup = () => {
-        const myId = localStorage.getItem(`myId`);
+        const myId = localStorage.getItem("myId");
         const dateTime = getTime();
-        const firstuser = [localStorage.getItem(`myId`), localStorage.getItem(`userId`)]
-        const realTime = dateTime.date + ` ` + dateTime.actual_time;
-        axios.post(`${Live_API}/api/group/create`, { myId, realTime, groupName, firstuser });
-        setGroupName(``);
+        const firstuser = [localStorage.getItem("myId"), localStorage.getItem("userId")]
+        const realTime = dateTime.date + " " + dateTime.actual_time;
+        axios.post("https://nodebackend-ro7w.onrender.com/api/group/create", { myId, realTime, groupName, firstuser });
+        setGroupName("");
     }
 
     const [groupChats, setGroupChat] = useState([]);
 
     const get_group_chats = async (id) => {
-        const res = await axios.get(`${Live_API}/api/gchat/getchat/` + id);
+        const res = await axios.get("https://nodebackend-ro7w.onrender.com/api/gchat/getchat/" + id);
         setGroupChat(res.data.chats);
     }
 
     function uploadmediaInGroup(group, file) {
         const type = getMediaType(file, false);
         const dateTime = getTime();
-        const realTime = dateTime.date + ` ` + dateTime.actual_time;
+        const realTime = dateTime.date + " " + dateTime.actual_time;
         const fd = new FormData();
         fd.append(`${type}`, media);
-        fd.append(`group`, group);
-        fd.append(`messageType`, type);
-        fd.append(`sender`, localStorage.getItem(`myId`));
-        fd.append(`realTime`, realTime);
-        axios.post(`${Live_API}/api/gchat/createmedia`, fd);
+        fd.append("group", group);
+        fd.append("messageType", type);
+        fd.append("sender", localStorage.getItem("myId"));
+        fd.append("realTime", realTime);
+        axios.post("https://nodebackend-ro7w.onrender.com/api/gchat/createmedia", fd);
         setMedia(undefined);
         setFileUrl(null);
         setTimeout(() => {
-            get_group_chats(localStorage.getItem(`groupId`));
-            socket.emit(`__load_data__`);
+            get_group_chats(localStorage.getItem("groupId"));
+            socket.emit("__load_data__");
             setTimeout(() => {
                 topToBottom();
-                setLoad(`$`)
+                setLoad("$")
             }, 602);
         }, 140);
     }
@@ -440,14 +439,14 @@ const ChatRoom = () => {
             return;
         }
         const dateTime = getTime();
-        const realTime = dateTime.date + ` ` + dateTime.actual_time;
-        axios.post(`${Live_API}/api/gchat/createtext`, { group, messageType: `text`, sender: localStorage.getItem(`myId`), content: message, realTime });
-        setMessage(``);
-        get_group_chats(localStorage.getItem(`groupId`));
-        socket.emit(`__load_data__`);
+        const realTime = dateTime.date + " " + dateTime.actual_time;
+        axios.post("https://nodebackend-ro7w.onrender.com/api/gchat/createtext", { group, messageType: "text", sender: localStorage.getItem("myId"), content: message, realTime });
+        setMessage("");
+        get_group_chats(localStorage.getItem("groupId"));
+        socket.emit("__load_data__");
         setTimeout(() => {
             topToBottom();
-            setLoad(`$`)
+            setLoad("$")
         }, 610)
     }
 
@@ -456,17 +455,17 @@ const ChatRoom = () => {
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach((entry) => {
                     if (entry.isIntersecting) {
-                        axios.post(`${Live_API}/api/gchat/seenby`, { messageId: entry.target.id, userId: localStorage.getItem(`myId`) });
+                        axios.post("https://nodebackend-ro7w.onrender.com/api/gchat/seenby", { messageId: entry.target.id, userId: localStorage.getItem("myId") });
                         observer.unobserve(entry.target);
                         setTimeout(() => {
-                            socket.emit(`__load_data__`);
+                            socket.emit("__load_data__");
                         }, 100);
 
                     }
                 });
             });
 
-            const messageElements = document.querySelectorAll(`.chat`);
+            const messageElements = document.querySelectorAll(".chat");
             messageElements.forEach((el) => observer.observe(el));
 
             return () => observer.disconnect();
@@ -474,75 +473,75 @@ const ChatRoom = () => {
     }, [load]);
 
     function topToBottom() {
-        const chat_container = document.getElementById(`chat_container`);
-        chat_container.scrollTo({ top: chat_container.scrollHeight, behavior: `smooth` });
+        const chat_container = document.getElementById("chat_container");
+        chat_container.scrollTo({ top: chat_container.scrollHeight, behavior: "smooth" });
     }
 
     useEffect(() => {
-        get_group_chats(localStorage.getItem(`groupId`));
+        get_group_chats(localStorage.getItem("groupId"));
         topToBottom();
     }, []);
 
     useEffect(() => {
         const handelGchat = (e) => {
-            get_group_chats(localStorage.getItem(`groupId`))
+            get_group_chats(localStorage.getItem("groupId"))
         }
-        socket.on(`__load_data__`, handelGchat);
+        socket.on("__load_data__", handelGchat);
     }, []);
 
     const [isMenu, setIsMenu] = useState(false);
     const [gChatId, setGChatId] = useState(null);
     const [messageWoner, setMesageWoner] = useState(null);
     const [GCR, setGCR] = useState(false);
-    const [msgText, setMsgText] = useState(``);
-    const [msgWonerImage, setMsgWonerImage] = useState(``);
-    const [groupDesign, setGroupDesign] = useState(``);
+    const [msgText, setMsgText] = useState("");
+    const [msgWonerImage, setMsgWonerImage] = useState("");
+    const [groupDesign, setGroupDesign] = useState("");
 
     const deleteGMesage = (message) => {
-        axios.post(`${Live_API}/api/gchat/deleteMessage`, { group: localStorage.getItem(`groupId`), message });
+        axios.post("https://nodebackend-ro7w.onrender.com/api/gchat/deleteMessage", { group: localStorage.getItem("groupId"), message });
         setTimeout(() => {
-            socket.emit(`__load_data__`);
+            socket.emit("__load_data__");
         }, 70)
     }
 
     const replayGChat = (rtext, mtext, image) => {
         const dateTime = getTime();
-        const realTime = dateTime.date + ` ` + dateTime.actual_time;
-        axios.post(`${Live_API}/api/gchat/reply`, { rtext, messageType: `reply`, sender, image, mtext, realTime, group: localStorage.getItem(`groupId`) });
+        const realTime = dateTime.date + " " + dateTime.actual_time;
+        axios.post("https://nodebackend-ro7w.onrender.com/api/gchat/reply", { rtext, messageType: "reply", sender, image, mtext, realTime, group: localStorage.getItem("groupId") });
         setIsRplay(false);
-        setMessage(``);
+        setMessage("");
         setTimeout(() => {
-            socket.emit(`__load_data__`);
+            socket.emit("__load_data__");
         }, 70)
     };
 
 
     const changeBgGroup = (bgColor, bgImage, bgType) => {
-        axios.post(`${Live_API}/api/group/changebg`, { bgColor, bgImage, bgType, group: localStorage.getItem(`groupId`) });
+        axios.post("https://nodebackend-ro7w.onrender.com/api/group/changebg", { bgColor, bgImage, bgType, group: localStorage.getItem("groupId") });
     }
 
     async function vioceHandeler(e) {
         const dateTime = getTime();
-        const realTime = dateTime.date + ` ` + dateTime.actual_time;
+        const realTime = dateTime.date + " " + dateTime.actual_time;
         let formData = new FormData();
-        const sender = localStorage.getItem(`myId`), riciver = localStorage.getItem(`userId`);
-        const url = `${Live_API}/api/${isCahtTab ? `chat/upload` : `gchat/createmedia`}`
-        formData.append(`audio`, e, `voice.mp3`);
+        const sender = localStorage.getItem("myId"), riciver = localStorage.getItem("userId");
+        const url = `https://nodebackend-ro7w.onrender.com/api/${isCahtTab ? "chat/upload" : "gchat/createmedia"}`
+        formData.append("audio", e, "voice.mp3");
         if (!isCahtTab) {
-            formData.append(`group`, localStorage.getItem(`groupId`));
-            formData.append(`messageType`, `audio`);
-            formData.append(`sender`, sender);
-            formData.append(`realTime`, realTime);
+            formData.append("group", localStorage.getItem("groupId"));
+            formData.append("messageType", "audio");
+            formData.append("sender", sender);
+            formData.append("realTime", realTime);
 
         }
         await axios.post(url, formData).then(res => {
             const mediaUrl = res.data?.mediaUrl;
-            socket.emit(`__load_data__`);
+            socket.emit("__load_data__");
             setLoad(load + 3)
             try {
                 if (mediaUrl) {
                     const data = { mediaUrl, realtime: realTime, sender, riciver, message }
-                    socket.emit(`send_message`, data);
+                    socket.emit("send_message", data);
                 }
             } catch (error) {
                 console.log(error);
@@ -553,20 +552,20 @@ const ChatRoom = () => {
     useEffect(() => {
         const handleKeyUp = (e) => {
             e.preventDefault();
-            if (e.key === `Enter`) {
-                const el = document.getElementById(`rocketsender`);
+            if (e.key === "Enter") {
+                const el = document.getElementById("rocketsender");
                 if (el) {
                     el.click();
-                    setMessage(``);
-                    setRplay(``);
+                    setMessage("");
+                    setRplay("");
                 }
             }
         };
-        window.addEventListener(`mouseup`, () => { setRecording(false) })
-        window.addEventListener(`keyup`, handleKeyUp);
+        window.addEventListener("mouseup", () => { setRecording(false) })
+        window.addEventListener("keyup", handleKeyUp);
         return () => {
-            window.removeEventListener(`keyup`, handleKeyUp);
-            window.removeEventListener(`mouseup`, () => { setRecording(false) })
+            window.removeEventListener("keyup", handleKeyUp);
+            window.removeEventListener("mouseup", () => { setRecording(false) })
         };
     }, []);
 
@@ -574,25 +573,25 @@ const ChatRoom = () => {
 
     const [groupImage, setGroupImage] = useState(null);
     const [gname, setGname] = useState(false);
-    const [pgname, setPGname] = useState(``);
+    const [pgname, setPGname] = useState("");
 
     async function changeGroupImage() {
         const fd = new FormData();
-        fd.append(`img`, groupImage)
-        await axios.post(`${Live_API}/api/group/changeImage/` + localStorage.getItem(`groupId`), fd).then(res => localStorage.setItem(`userImage`, res.data.img))
+        fd.append("img", groupImage)
+        await axios.post("https://nodebackend-ro7w.onrender.com/api/group/changeImage/" + localStorage.getItem("groupId"), fd).then(res => localStorage.setItem("userImage", res.data.img))
         setGroupImage(null)
         setLoad(load + 2)
     }
 
     async function changeGeroupName() {
-        await axios.post(`${Live_API}/api/group/changeName`, { groupName: pgname, groupId: localStorage.getItem(`groupId`) }).then(res => localStorage.setItem(`userName`, res.data.name));
+        await axios.post("https://nodebackend-ro7w.onrender.com/api/group/changeName", { groupName: pgname, groupId: localStorage.getItem("groupId") }).then(res => localStorage.setItem("userName", res.data.name));
         setGname(false);
         setLoad(load + 1);
-        setPGname(``)
+        setPGname("")
     }
 
     async function leftfromgroup() {
-        await axios.post(`${Live_API}/api/people/leftfromgroup`, { user: localStorage.getItem(`myId`), group: localStorage.getItem(`groupId`) });
+        await axios.post("https://nodebackend-ro7w.onrender.com/api/people/leftfromgroup", { user: localStorage.getItem("myId"), group: localStorage.getItem("groupId") });
         setLoad(load + 1);
     }
 
@@ -602,14 +601,13 @@ const ChatRoom = () => {
 
     useEffect(() => {
         const groupvideoCall = (e) => {
-            localStorage.setItem(`groom`, e);
-            navigate(`/groupcallvideo`);
+            localStorage.setItem("groom", e);
+            navigate("/groupcallvideo");
             console.log(e)
         }
-        socket.on(`groupvideocall`, groupvideoCall);
-        return () => socket.off(`groupvideocall`, groupvideoCall);
+        socket.on("groupvideocall", groupvideoCall);
+        return () => socket.off("groupvideocall", groupvideoCall);
     }, [])
-
 
     return (
         <div className='sm:flex h-screen overflow-y-auto'>

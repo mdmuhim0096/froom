@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import axios from "axios"
-import { Live_API, server_port } from './api';
+import { server_port } from './api';
 import Mypost from './Mypost';
 import { ArrowLeft, Ellipsis, Pencil, X, ImagePlus } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -13,11 +13,11 @@ const Profile = () => {
     useEffect(() => {
         const getdata = async () => {
             try {
-                const res = await axios.get(`${Live_API}/api/people/userData`, { withCredentials: true });
+                const res = await axios.get("https://nodebackend-ro7w.onrender.com/api/people/userData", { withCredentials: true });
                 const data = res.data.data;
                 setUser(res.data.data);
-                localStorage.setItem(`myId`, data._id);
-                localStorage.setItem(`myImage`, data.image);
+                localStorage.setItem("myId", data._id);
+                localStorage.setItem("myImage", data.image);
             } catch (error) {
                 console.log(error);
             }
@@ -26,61 +26,61 @@ const Profile = () => {
     }, [load]);
 
     const [isBio, setIsBio] = useState(false);
-    const [bio, setBio] = useState(``);
+    const [bio, setBio] = useState("");
     const [file, setFile] = useState(null);
-    const [name, setName] = useState(``);
+    const [name, setName] = useState("");
     const [x, setx] = useState(false);
     const [y, sety] = useState(false);
     const [a, seta] = useState(false);
     const [b, setb] = useState(false);
     const [c, setc] = useState(false);
     const [d, setd] = useState(false);
-    const [email, setemail] = useState(``);
-    const [age, setage] = useState(``);
-    const [gender, setgender] = useState(``);
-    const [maritalStatus, setmaritalStatus] = useState(``);
+    const [email, setemail] = useState("");
+    const [age, setage] = useState("");
+    const [gender, setgender] = useState("");
+    const [maritalStatus, setmaritalStatus] = useState("");
 
     const addBio = (e) => {
-        axios.post(`${Live_API}/api/people/addbio`, { bio: e }, { withCredentials: true })
+        axios.post("https://nodebackend-ro7w.onrender.com/api/people/addbio", { bio: e }, { withCredentials: true })
         setIsBio(false)
         setTimeout(() => { setLoad(load + 1) }, 200)
     }
 
     const updateProfileImage = async () => {
         const fd = new FormData();
-        fd.append(`img`, file)
-        axios.post(`${Live_API}/api/people/updateProfileImage`, fd, { withCredentials: true });
+        fd.append("img", file)
+        axios.post("https://nodebackend-ro7w.onrender.com/api/people/updateProfileImage", fd, { withCredentials: true });
         setx(false);
         setLoad(load + 1);
     }
 
     const updateProfileName = async () => {
-        axios.post(`${Live_API}/api/people/updateProfileName`, { name }, { withCredentials: true });
+        axios.post("https://nodebackend-ro7w.onrender.com/api/people/updateProfileName", { name }, { withCredentials: true });
         sety(false);
         setLoad(load + 1);
     }
 
 
     const updateProfileEmail = async () => {
-        axios.post(`${Live_API}/api/people/updateProfileEmail`, { email }, { withCredentials: true });
+        axios.post("https://nodebackend-ro7w.onrender.com/api/people/updateProfileEmail", { email }, { withCredentials: true });
         seta(false);
         setLoad(load + 1);
     }
 
     const updateProfileGender = async () => {
-        axios.post(`${Live_API}/api/people/updateProfileGender`, { gender }, { withCredentials: true });
+        axios.post("https://nodebackend-ro7w.onrender.com/api/people/updateProfileGender", { gender }, { withCredentials: true });
         setb(false);
         setLoad(load + 1);
     }
 
     const updateProfileAge = async () => {
-        axios.post(`${Live_API}/api/people/updateProfileAge`, { age }, { withCredentials: true });
+        axios.post("https://nodebackend-ro7w.onrender.com/api/people/updateProfileAge", { age }, { withCredentials: true });
         setc(false);
         setLoad(load + 1);
     }
 
     const updateProfileMaritaStatus = async () => {
-        axios.post(`${Live_API}/api/people/updateProfileMaritaStatus`, { maritalStatus }, { withCredentials: true });
+        axios.post("https://nodebackend-ro7w.onrender.com/api/people/updateProfileMaritaStatus", { maritalStatus }, { withCredentials: true });
         setd(false);
         setLoad(load + 1);
     }
@@ -106,10 +106,10 @@ const Profile = () => {
                     <img className='object-fill w-full h-full' src={server_port + user.image} title='cover image' />
                     <img src={server_port + user.image} className='w-24 h-2w-24 border-2 rounded-full absolute bottom-0 left-0' title='profile image' />
                     <div className={`absolute top-0 left-0 flex justify-center items-center p-5 w-full h-full bg-slate-900 z-50 flex-col ${x ? "block" : "hidden"}`}>
-                        <X className='absolute top-2 right-2' onClick={() => { setx(false) }} />
+                        <X  className='absolute top-2 right-2' onClick={() => {setx(false)}}/>
                         <div className='w-auto border flex justify-center items-center bg-gradient-to-r from-emerald-400 to-cyan-400 p-2 rounded-md'>
                             <input type="file" className='absolute w-10 opacity-0' onChange={(e) => { setFile(e.target.files[0]) }} />
-                            <ImagePlus />
+                                <ImagePlus />
                         </div>
                         <button className='my-3' onClick={() => { updateProfileImage() }}>update</button>
                     </div>
@@ -203,7 +203,7 @@ const Profile = () => {
                                 <Ellipsis />
                             </span>
                         </div>
-                        <Seemore text={user.bio} range={150} />
+                        <Seemore text={user.bio} range={150}/>
                     </div>
                 </div>
             </div>

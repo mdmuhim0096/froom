@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react'
 import axios from 'axios';
-import { Live_API, mypost_api, server_port } from './api';
+import { mypost_api, server_port } from './api';
 import { Ellipsis, X, Share2, MessageSquareIcon, ThumbsUp, Rocket } from "lucide-react";
 import Seemore from './Seemore';
 import { Link } from "react-router-dom";
@@ -27,22 +27,8 @@ const Mypost = () => {
     const [commentId, setCommentId] = useState("");
     const [innerReplay, setInnerReplay] = useState(false);
     const [innerReplayId, setInnerReplayId] = useState("");
-    const [replayOf, setReplayOf] = useState("");
-    const [nestedId, setNestedId] = useState("");
-    const [nsetReplay, setNestReplay] = useState(false);
+
     const notify = (m) => { toast.success(m) }
-    const [captionForUpdate, setCaptionForUpdate] = useState("");
-    const [updatebleFile, setFileForUpdate] = useState(null);
-    const [updateForm, setUpdateForm] = useState(false);
-    const [idForUpdateHandel, setIdForUpdateHandel] = useState("");
-
-    const [scrollTop, setScrollTop] = useState(window.scrollY);
-    useEffect(() => {
-        const handelScrollY = () => setScrollTop(window.scrollY);
-        window.addEventListener("scroll", handelScrollY)
-
-        return () => window.removeEventListener("scroll", handelScrollY)
-    }, []);
 
     const [post_info, setPost_info] = useState([]);
     const [commentReplay, setCommentReplay] = useState([
@@ -53,12 +39,13 @@ const Mypost = () => {
             "replies": []
         }
     ]);
+
     const [post_id, setPost_id] = useState("");
 
     useEffect(() => {
         try {
             const getPostInfo = async (id) => {
-                const res = await axios.get(`${Live_API}/api/post/postinfo/${id}`);
+                const res = await axios.get(`https://nodebackend-ro7w.onrender.com/api/post/postinfo/${id}`);
                 setPost_info(res.data.singlePost);
                 setCommentReplay(res.data.singlePost.comments)
             }
@@ -73,57 +60,59 @@ const Mypost = () => {
 
     }, [post_info])
 
-
     const doLike = (postId) => {
-        axios.post(`${Live_API}/api/post/addlike`, { postId }, { withCredentials: true })
+        axios.post("https://nodebackend-ro7w.onrender.com/api/post/addlike", { postId }, { withCredentials: true })
     }
 
     const addComment = () => {
         if (commentOrReplay.trim()) {
-            axios.post(`${Live_API}/api/post/addcomment`, { comment: commentOrReplay, post_id }, { withCredentials: true })
-            setCommentOrReplay(``)
-            notify(`comment added ☺`)
+            axios.post("https://nodebackend-ro7w.onrender.com/api/post/addcomment", { comment: commentOrReplay, post_id }, { withCredentials: true })
+            setCommentOrReplay("")
+            notify("comment added ☺")
         }
     }
 
     const doReplay = () => {
         if (commentOrReplay.trim()) {
-            axios.post(`${Live_API}/api/post/addreplay`, { replyText: commentOrReplay, postId: post_id, commentId }, { withCredentials: true })
+            axios.post("https://nodebackend-ro7w.onrender.com/api/post/addreplay", { replyText: commentOrReplay, postId: post_id, commentId }, { withCredentials: true })
         }
-        setCommentOrReplay(``)
-        notify(`replay added ☺`)
+        setCommentOrReplay("")
+        notify("replay added ☺")
     }
 
     const doInnerRplay = () => {
         if (commentOrReplay.trim()) {
-            axios.post(`${Live_API}/api/post/addinnerreplay`, { replyText: commentOrReplay, postId: post_id, commentId, repId: innerReplayId }, { withCredentials: true })
+            axios.post("https://nodebackend-ro7w.onrender.com/api/post/addinnerreplay", { replyText: commentOrReplay, postId: post_id, commentId, repId: innerReplayId }, { withCredentials: true })
         }
-        setCommentOrReplay(``)
-        notify(`replay added ☺`)
+        setCommentOrReplay("")
+        notify("replay added ☺")
         setInnerReplay(false);
     }
+    const [replayOf, setReplayOf] = useState("");
+    const [nestedId, setNestedId] = useState("");
+    const [nsetReplay, setNestReplay] = useState(false);
 
     const doNestedInnerReplay = () => {
         if (commentOrReplay.trim()) {
-            axios.post(`${Live_API}/api/post/addNestedInnerReplay`, { replyText: commentOrReplay, postId: post_id, commentId, repId: innerReplayId, replayOf, nestedId }, { withCredentials: true })
+            axios.post("https://nodebackend-ro7w.onrender.com/api/post/addNestedInnerReplay", { replyText: commentOrReplay, postId: post_id, commentId, repId: innerReplayId, replayOf, nestedId }, { withCredentials: true })
         }
-        setCommentOrReplay(``)
-        notify(`replay added ☺`)
+        setCommentOrReplay("")
+        notify("replay added ☺")
         setInnerReplay(false);
     }
 
     const addLike_comment = () => {
-        axios.post(`${Live_API}/api/post/addlike_comment`, { postId: post_id, commentId }, { withCredentials: true });
+        axios.post("https://nodebackend-ro7w.onrender.com/api/post/addlike_comment", { postId: post_id, commentId }, { withCredentials: true });
     }
 
     const addlike_replay = (repId, commentId) => {
-        axios.post(`${Live_API}/api/post/addlike_replay`, { postId: post_id, commentId, repId }, { withCredentials: true });
-        console.log(`commentId`, commentId, `repId`, repId, `postId`, post_id)
+        axios.post("https://nodebackend-ro7w.onrender.com/api/post/addlike_replay", { postId: post_id, commentId, repId }, { withCredentials: true });
+        console.log("commentId", commentId, "repId", repId, "postId", post_id)
     }
 
     const inner_addlike_replay = (repId, commentId, nestId) => {
-        axios.post(`${Live_API}/api/post/inner_addlike_replay`, { postId: post_id, commentId, repId, nestId }, { withCredentials: true });
-        console.log(`commentId`, commentId, `repId`, repId, `postId`, post_id)
+        axios.post("https://nodebackend-ro7w.onrender.com/api/post/inner_addlike_replay", { postId: post_id, commentId, repId, nestId }, { withCredentials: true });
+        console.log("commentId", commentId, "repId", repId, "postId", post_id)
     }
 
 
@@ -132,23 +121,35 @@ const Mypost = () => {
         inputRef.current.focus();
     }
 
+    const [captionForUpdate, setCaptionForUpdate] = useState("");
+    const [updatebleFile, setFileForUpdate] = useState(null);
+    const [updateForm, setUpdateForm] = useState(false);
+    const [idForUpdateHandel, setIdForUpdateHandel] = useState("");
+
     const updateCption = (postId) => {
-        axios.post(`${Live_API}/api/post/upadateCaption/` + postId, { caption: captionForUpdate });
+        axios.post("https://nodebackend-ro7w.onrender.com/api/post/upadateCaption/" + postId, { caption: captionForUpdate });
         setLoad(load + 1)
     }
 
     const updateFile = (postId) => {
         const fd = new FormData();
-        fd.append(`media`, updatebleFile);
-        axios.post(`${Live_API}/api/post/upadateMedia/` + postId, fd);
+        fd.append("media", updatebleFile);
+        axios.post("https://nodebackend-ro7w.onrender.com/api/post/upadateMedia/" + postId, fd);
         setLoad(load + 1)
     }
 
     const deletePost = (postId) => {
-        axios.delete(`${Live_API}/api/post/delete/` + postId);
+        axios.delete("https://nodebackend-ro7w.onrender.com/api/post/delete/" + postId);
         setLoad(load + 1)
     }
 
+    const [scrollTop, setScrollTop] = useState(window.scrollY);
+    useEffect(() => {
+        const handelScrollY = () => setScrollTop(window.scrollY);
+        window.addEventListener("scroll", handelScrollY)
+
+        return () => window.removeEventListener("scroll", handelScrollY)
+    }, []);
 
     return (
         <div className=''>

@@ -5,7 +5,7 @@ import { ArrowLeft, RotateCcw, Loader } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import ToggleBtn from "./ToggleBtn";
 import { ToastContainer, toast } from "react-toastify"
-import { Live_API } from "./api"
+
 const Settings = () => {
 
     const navigate = useNavigate();
@@ -14,47 +14,46 @@ const Settings = () => {
 
     const myDBid = () => localStorage.getItem("myId");
 
-
     const doChangeTextColor = (color) => {
         const id = myDBid();
-        const myColor = color.split(`-`);
-        myColor[0] = `text`;
-        const textColor = myColor.join(`-`);
-        axios.post(`${Live_API}/api/people/textcolor`, { textColor, id });
+        const myColor = color.split("-");
+        myColor[0] = "text";
+        const textColor = myColor.join("-");
+        axios.post("https://nodebackend-ro7w.onrender.com/api/people/textcolor", { textColor, id });
         location.reload();
     }
 
     const doChangeBGColor = (themebg) => {
         const id = myDBid();
-        axios.post(`${Live_API}/api/people/themebg`, { themebg, id });
+        axios.post("https://nodebackend-ro7w.onrender.com/api/people/themebg", { themebg, id });
         location.reload();
     }
 
     const doChangeTextStyle = (textStyle) => {
         const id = myDBid();
-        axios.post(`${Live_API}/api/people/textstyle`, { textStyle, id });
+        axios.post("https://nodebackend-ro7w.onrender.com/api/people/textstyle", { textStyle, id });
         location.reload();
     }
 
     const doChangePostBg = (postbg) => {
         const id = myDBid();
-        axios.post(`${Live_API}/api/people/postbg`, { postbg, id });
+        axios.post("https://nodebackend-ro7w.onrender.com/api/people/postbg", { postbg, id });
         location.reload();
     }
 
-    const [email, setEmail] = useState(``);
-    const [password, setPassword] = useState(``);
-    const [_newPassword_, setNewPassword_] = useState(``);
-    const [newPassword, setNewPassword] = useState(``);
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [_newPassword_, setNewPassword_] = useState("");
+    const [newPassword, setNewPassword] = useState("");
     const [isLoad, setIsLoad] = useState(false);
     const [isNew, setIsNew] = useState(false);
     const getPermision = async () => {
         setIsLoad(true)
         try {
-            axios.post(`${Live_API}/api/people/checkauth`, { email, password })
+            axios.post("https://nodebackend-ro7w.onrender.com/api/people/checkauth", { email, password })
                 .then(res => {
                     setIsLoad(false);
-                    toast.success(`yes ` + res.data.message.toLowerCase());
+                    toast.success("yes " + res.data.message.toLowerCase());
                     setIsNew(res.data.success);
                 }).catch(err => {
                     setIsLoad(false);
@@ -67,16 +66,16 @@ const Settings = () => {
 
     const restpassword = () => {
         if (_newPassword_ !== newPassword) {
-            return toast.warn(`please type same value in inputs`);
+            return toast.warn("please type same value in inputs");
         }
 
         setIsLoad(true);
 
         try {
-            axios.post(`${Live_API}/api/people/restpassword`, { password: _newPassword_ }, { withCredentials: true })
+            axios.post("https://nodebackend-ro7w.onrender.com/api/people/restpassword", { password: _newPassword_ }, { withCredentials: true })
                 .then(res => {
                     setIsLoad(false);
-                    toast.success(`yes ` + res.data.message.toLowerCase());
+                    toast.success("yes " + res.data.message.toLowerCase());
                 }).catch(err => {
                     setIsLoad(false);
                     toast(err.response?.data.message, err.response?.data.success);
@@ -86,12 +85,12 @@ const Settings = () => {
         }
     }
 
-    const [isActive, setIsActive] = useState(localStorage.getItem(`activeStatus`));
+    const [isActive, setIsActive] = useState(localStorage.getItem("activeStatus"));
     const [load, setLoad] = useState(0);
     useEffect(() => {
         const getStatus = async () => {
-            const res = await axios.get(`${Live_API}/api/people/userData`, { withCredentials: true });
-            localStorage.setItem(`activeStatus`, res.data.data.isActive);
+            const res = await axios.get("https://nodebackend-ro7w.onrender.com/api/people/userData", { withCredentials: true });
+            localStorage.setItem("activeStatus", res.data.data.isActive);
             setIsActive(res.data.data.isActive);
         }
         getStatus();
@@ -100,10 +99,9 @@ const Settings = () => {
     const handelStatus = () => {
         setLoad(load + 1);
         const userId = myDBid();
-        axios.post(`${Live_API}/api/people/${isActive ? `dactiveuser` : `activeuser`}`, { userId });
-        localStorage.setItem(`isTurn`, isActive ? false : true)
+        axios.post(`https://nodebackend-ro7w.onrender.com/api/people/${isActive ? "dactiveuser" : "activeuser"}`, { userId });
+        localStorage.setItem("isTurn", isActive ? false : true)
     }
-
 
     return (
         <div className='p-4 h-screen overflow-y-auto'>

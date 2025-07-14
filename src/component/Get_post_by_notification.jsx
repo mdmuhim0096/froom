@@ -8,7 +8,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import { server_port } from './api';
 import Navbar from "./Navbar";
 import ShortText from './ShortText';
-import { Live_API } from './api';
+import socket from './socket';
 
 const Get_post_by_notification = () => {
 
@@ -25,11 +25,11 @@ const Get_post_by_notification = () => {
     const [innerReplayId, setInnerReplayId] = useState("");
 
     const notify = (m) => { toast.success(m) };
-
+    console.log(posts);
     useEffect(() => {
         try {
             const getPublicPost = async () => {
-                const res = await axios.get(`${Live_API}/api/post/getpostbyid/${postId}`);
+                const res = await axios.get(`https://nodebackend-ro7w.onrender.com/api/post/getpostbyid/${postId}`);
                 setPost(Array.isArray(res.data.post) ? res.data.post : [res.data.post]);
             }
             getPublicPost();
@@ -37,10 +37,6 @@ const Get_post_by_notification = () => {
             console.log(error);
         }
     }, [load]);
-
-    const [replayOf, setReplayOf] = useState("");
-    const [nestedId, setNestedId] = useState("");
-    const [nsetReplay, setNestReplay] = useState(false);
 
     const [post_info, setPost_info] = useState([]);
     const [commentReplay, setCommentReplay] = useState([
@@ -52,10 +48,11 @@ const Get_post_by_notification = () => {
         }
     ]);
 
+    const [post_id, setPost_id] = useState("");
 
     const getPostInfo = async (id) => {
         try {
-            const res = await axios.get(`${Live_API}/api/post/postinfo/${id}`);
+            const res = await axios.get(`https://nodebackend-ro7w.onrender.com/api/post/postinfo/${id}`);
             setPost_info(res.data.singlePost);
             setCommentReplay(res.data.singlePost.comments)
             console.log(res.data.singlePost.comments);
@@ -69,55 +66,56 @@ const Get_post_by_notification = () => {
     }, [post_id], load)
 
     const doLike = (postId) => {
-        axios.post(`${Live_API}/api/post/addlike`, { postId }, { withCredentials: true })
+        axios.post("https://nodebackend-ro7w.onrender.com/api/post/addlike", { postId }, { withCredentials: true })
     }
 
     const addComment = () => {
         if (commentOrReplay.trim()) {
-            axios.post(`${Live_API}/api/post/addcomment`, { comment: commentOrReplay, post_id }, { withCredentials: true })
-            setCommentOrReplay(``)
-            notify(`comment added ☺`)
+            axios.post("https://nodebackend-ro7w.onrender.com/api/post/addcomment", { comment: commentOrReplay, post_id }, { withCredentials: true })
+            setCommentOrReplay("")
+            notify("comment added ☺")
         }
     }
 
     const doReplay = () => {
         if (commentOrReplay.trim()) {
-            axios.post(`${Live_API}/api/post/addreplay`, { replyText: commentOrReplay, postId: post_id, commentId }, { withCredentials: true })
+            axios.post("https://nodebackend-ro7w.onrender.com/api/post/addreplay", { replyText: commentOrReplay, postId: post_id, commentId }, { withCredentials: true })
         }
-        setCommentOrReplay(``)
-        notify(`replay added ☺`)
+        setCommentOrReplay("")
+        notify("replay added ☺")
     }
 
     const doInnerRplay = () => {
         if (commentOrReplay.trim()) {
-            axios.post(`${Live_API}/api/post/addinnerreplay`, { replyText: commentOrReplay, postId: post_id, commentId, repId: innerReplayId }, { withCredentials: true })
+            axios.post("https://nodebackend-ro7w.onrender.com/api/post/addinnerreplay", { replyText: commentOrReplay, postId: post_id, commentId, repId: innerReplayId }, { withCredentials: true })
         }
-        setCommentOrReplay(``)
-        notify(`replay added ☺`)
+        setCommentOrReplay("")
+        notify("replay added ☺")
         setInnerReplay(false);
     }
-
-    const [post_id, setPost_id] = useState(``);
+    const [replayOf, setReplayOf] = useState("");
+    const [nestedId, setNestedId] = useState("");
+    const [nsetReplay, setNestReplay] = useState(false);
 
     const doNestedInnerReplay = () => {
         if (commentOrReplay.trim()) {
-            axios.post(`${Live_API}/api/post/addNestedInnerReplay`, { replyText: commentOrReplay, postId: post_id, commentId, repId: innerReplayId, replayOf, nestedId }, { withCredentials: true })
+            axios.post("https://nodebackend-ro7w.onrender.com/api/post/addNestedInnerReplay", { replyText: commentOrReplay, postId: post_id, commentId, repId: innerReplayId, replayOf, nestedId }, { withCredentials: true })
         }
-        setCommentOrReplay(``)
-        notify(`replay added ☺`)
+        setCommentOrReplay("")
+        notify("replay added ☺")
         setInnerReplay(false);
     }
 
     const addLike_comment = () => {
-        axios.post(`${Live_API}/api/post/addlike_comment`, { postId: post_id, commentId }, { withCredentials: true });
+        axios.post("https://nodebackend-ro7w.onrender.com/api/post/addlike_comment", { postId: post_id, commentId }, { withCredentials: true });
     }
 
     const addlike_replay = (repId, commentId) => {
-        axios.post(`${Live_API}/api/post/addlike_replay`, { postId: post_id, commentId, repId }, { withCredentials: true });
+        axios.post("https://nodebackend-ro7w.onrender.com/api/post/addlike_replay", { postId: post_id, commentId, repId }, { withCredentials: true });
     }
 
     const inner_addlike_replay = (repId, commentId, nestId) => {
-        axios.post(`${Live_API}/api/post/inner_addlike_replay`, { postId: post_id, commentId, repId, nestId }, { withCredentials: true });
+        axios.post("https://nodebackend-ro7w.onrender.com/api/post/inner_addlike_replay", { postId: post_id, commentId, repId, nestId }, { withCredentials: true });
     }
 
     const inputRef = useRef();
@@ -343,13 +341,13 @@ const Get_post_by_notification = () => {
                                 // setLoad(load + 1);
                                 if (innerReplay) {
                                     doInnerRplay();
-                                    getPostInfo(post_id);
+                                     getPostInfo(post_id);
                                 } else if (nsetReplay) {
                                     doNestedInnerReplay();
-                                    getPostInfo(post_id);
+                                     getPostInfo(post_id);
                                 } else {
                                     doreplay ? doReplay() : addComment();
-                                    getPostInfo(post_id);
+                                     getPostInfo(post_id);
                                 }
                                 setTimeout(() => { setDoReoplay(false) }, 60);
                             }}>
