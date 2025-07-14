@@ -1,4 +1,4 @@
-const API = "http://localhost:4000" //https://nodebackend-ro7w.onrender.com
+const API = "https://nodebackend-ro7w.onrender.com" //https://nodebackend-ro7w.onrender.com
 
 export const server_port = `${API}/`;
 export const signup_api = `${API}/api/people/signup`;
